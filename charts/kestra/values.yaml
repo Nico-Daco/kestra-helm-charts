@@ -1,3 +1,9 @@
+global:
+  organisationDomainName: "local"
+  projectName: "prconfiguration"
+  environmentName: "dev"
+  bconnectEnvironmentName: "local"
+
 ### Image
 image:
   image: kestra/kestra

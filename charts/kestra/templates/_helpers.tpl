@@ -85,6 +85,14 @@ Form the Postgres URL.
 {{- printf "%s-%s:%s" .Release.Name "postgresql" $port -}}
 {{- end -}}
 
+{{- define "kestra.vaultSecretPath" -}}
+{{- $org := default "example.com" .Values.global.organisationDomainName -}}
+{{- $proj := default "demo" .Values.global.projectName -}}
+{{- $env := default "dev" .Values.global.environmentName -}}
+{{- $bce := default "default" .Values.global.bconnectEnvironmentName -}}
+{{- printf "%s/data/%s/%s/%s/" $org $proj $env $bce }}
+{{- end }}
+
 {{/*
 k8s-config vars
 */}}
@@ -206,9 +214,9 @@ spec:
         vault.hashicorp.com/agent-inject: "true"
         vault.hashicorp.com/role: "{{ .Release.Namespace }}"
         vault.hashicorp.com/agent-inject-secret-secrets: |-
-          {{ .Values.global.organisationDomainName }}/data/{{ .Values.global.projectName }}/{{ .Values.global.environmentName }}/{{ .Values.global.bconnectEnvironmentName }}/postgres
+          "{{ include "kestra.vaultSecretPath" $ }}"postgres
         vault.hashicorp.com/agent-inject-template-secrets: |-
-          {{`{{- with secret `}}"{{ .Values.global.organisationDomainName }}/data/{{ .Values.global.projectName }}/{{ .Values.global.environmentName }}/{{ .Values.global.bconnectEnvironmentName }}/postgres"{{` -}}`}}
+          {{`{{- with secret `}}"{{ include "kestra.vaultSecretPath" $ }}postgres"{{` -}}`}}
           {{`{{- range $k, $v := .Data.data }}`}}
           {{`export {{ $k }}='{{ $v }}'`}}
           {{`{{- end }}`}}
