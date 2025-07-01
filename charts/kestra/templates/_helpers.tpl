@@ -203,6 +203,16 @@ spec:
       annotations:
         checksum/secrets: {{ include (print $.Template.BasePath "/secret.yaml") $ | sha256sum }}
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") $ | sha256sum }}
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/role: "{{ .Release.Namespace }}"
+        vault.hashicorp.com/agent-inject-secret-secrets: |-
+          {{ .Values.global.organisationDomainName }}/data/{{ .Values.global.projectName }}/{{ .Values.global.environmentName }}/{{ .Values.global.bconnectEnvironmentName }}/postgres
+        vault.hashicorp.com/agent-inject-template-secrets: |-
+          {{`{{- with secret `}}"{{ .Values.global.organisationDomainName }}/data/{{ .Values.global.projectName }}/{{ .Values.global.environmentName }}/{{ .Values.global.bconnectEnvironmentName }}/postgres"{{` -}}`}}
+          {{`{{- range $k, $v := .Data.data }}`}}
+          {{`export {{ $k }}='{{ $v }}'`}}
+          {{`{{- end }}`}}
+          {{`{{- end }}`}}
       {{- with $.Values.podAnnotations }}
       {{- toYaml . | nindent 8 }}
       {{- end }}
