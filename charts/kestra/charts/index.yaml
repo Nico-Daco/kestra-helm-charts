@@ -3,7 +3,7 @@ entries:
   elasticsearch:
   - apiVersion: v1
     appVersion: 8.5.1
-    created: "2025-07-01T22:15:20.096546035+02:00"
+    created: "2025-07-23T18:00:39.032731894+02:00"
     description: Official Elastic helm chart for Elasticsearch
     digest: 8a5e70ec72dc480c8a01b079bf7240722da7d017f5683178e23a745d418448ba
     home: https://github.com/elastic/helm-charts
@@ -32,7 +32,7 @@ entries:
       licenses: Apache-2.0
     apiVersion: v2
     appVersion: 3.8.1
-    created: "2025-07-01T22:15:20.107561249+02:00"
+    created: "2025-07-23T18:00:39.044460398+02:00"
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
@@ -77,7 +77,7 @@ entries:
       licenses: Apache-2.0
     apiVersion: v2
     appVersion: 2024.12.18
-    created: "2025-07-01T22:15:20.110508039+02:00"
+    created: "2025-07-23T18:00:39.047875415+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -118,7 +118,7 @@ entries:
       licenses: Apache-2.0
     apiVersion: v2
     appVersion: 16.4.0
-    created: "2025-07-01T22:15:20.11630315+02:00"
+    created: "2025-07-23T18:00:39.053367622+02:00"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -147,4 +147,4 @@ entries:
     urls:
     - https://nico-daco.github.io/kestra-helm-charts/charts/postgresql-15.5.38.tgz
     version: 15.5.38
-generated: "2025-07-01T22:15:20.094675454+02:00"
+generated: "2025-07-23T18:00:39.030631149+02:00"
