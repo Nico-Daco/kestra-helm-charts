@@ -213,10 +213,21 @@ spec:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") $ | sha256sum }}
         vault.hashicorp.com/agent-inject: "true"
         vault.hashicorp.com/role: "{{ .Release.Namespace }}"
-        vault.hashicorp.com/agent-inject-secret-secrets: |-
-          "{{ include "kestra.vaultSecretPath" $ }}"postgres
-        vault.hashicorp.com/agent-inject-template-secrets: |-
-          {{`{{- with secret `}}"{{ include "kestra.vaultSecretPath" $ }}postgres"{{` -}}`}}
+        vault.hashicorp.com/agent-inject-secret-kestra-internal: |-
+          "{{ include "kestra.vaultSecretPath" $ }}"kestra-internal
+
+        vault.hashicorp.com/agent-inject-secret-kestra-worker: |-
+          "{{ include "kestra.vaultSecretPath" $ }}"kestra-worker
+
+        vault.hashicorp.com/agent-inject-template-kestra-internal: |-
+          {{`{{- with secret `}}"{{ include "kestra.vaultSecretPath" $ }}kestra-internal"{{` -}}`}}
+          {{`{{- range $k, $v := .Data.data }}`}}
+          {{`export {{ $k }}='{{ $v }}'`}}
+          {{`{{- end }}`}}
+          {{`{{- end }}`}}
+
+        vault.hashicorp.com/agent-inject-template-kestra-worker: |-
+          {{`{{- with secret `}}"{{ include "kestra.vaultSecretPath" $ }}kestra-worker"{{` -}}`}}
           {{`{{- range $k, $v := .Data.data }}`}}
           {{`export {{ $k }}='{{ $v }}'`}}
           {{`{{- end }}`}}
@@ -250,7 +261,7 @@ spec:
           command:
             - sh
             - -c
-            - "exec {{ $.Values.executable }} {{ tpl $deployment.command $ }}"
+            - "source /vault/secrets/kestra-internal && source /vault/secrets/kestra-worker && {{ $.Values.executable }} {{ tpl $deployment.command $ }}"
           env:
             {{- with default $.Values.extraEnv $deployment.extraEnv }}
             {{- toYaml . | trim | nindent 12 }}
@@ -372,6 +383,8 @@ spec:
         - name: {{ $.Chart.Name }}-{{ $name }}-docker-dind
           image: "{{ $.Values.dind.image.image }}:{{ $.Values.dind.image.tag }}"
           imagePullPolicy: {{ $.Values.dind.image.pullPolicy }}
+          command: |
+            source /vault/secrets/kestra-internal && source /vault/secrets/kestra-worker && dockerd-entrypoint.sh
           args:
             {{- toYaml $.Values.dind.args | nindent 12 }}
           env:
